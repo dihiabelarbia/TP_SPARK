@@ -9,9 +9,8 @@ def join_clients_villes(df_clients, df_villes):
     return df_clients.join(df_villes.dropDuplicates(["zip"]), "zip", "left_outer")
 
 def add_departement_column(zipcode):
-    # Détermination du département à partir du code postal
     departement = F.when(
-        F.substring(F.col("zip"), 1, 2) != "20",  # Si les deux premiers chiffres ne sont pas "20"
+        F.substring(F.col("zip"), 1, 2) != "20",
         F.substring(F.col("zip"), 1, 2)
     ).otherwise(
         F.when(F.col("zip") <= 20190, "2A").otherwise("2B") 
@@ -27,4 +26,3 @@ def main():
     final_df = joined_df.withColumn("departement" ,add_departement_column(joined_df["zip"]))
     final_df.write.parquet("data/exo2/output", mode="overwrite")
     spark.stop()
-
