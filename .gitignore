@@ -8,3 +8,5 @@ dist
 .pytest_cache
 .terraform*
 terraform.*
+src/resources/exo4/*
+src/fr/hymaia/exo4/*

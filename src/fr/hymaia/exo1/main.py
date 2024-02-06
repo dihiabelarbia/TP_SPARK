@@ -1,12 +1,24 @@
 import pyspark.sql.functions as f
 from pyspark.sql import SparkSession
 
-
-def main():
-    print("Hello world!")
-
-
 def wordcount(df, col_name):
     return df.withColumn('word', f.explode(f.split(f.col(col_name), ' '))) \
         .groupBy('word') \
         .count()
+
+def main():
+
+    spark = SparkSession.builder.appName("wordcount").master(
+        "local[*]").getOrCreate()
+
+    df = spark.read.option("header", True).csv(
+        "src/resources/exo1/data.csv")
+
+    df_count = wordcount(df, "text")
+
+    df_count.write.partitionBy("count").mode("overwrite").parquet(
+        "data/exo1/output")
+
+
+if __name__ == "__main__":
+    main()
